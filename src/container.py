@@ -3,7 +3,7 @@ from src.application.blacklist_service import BlacklistService
 from src.infrastructure.health_check import SQLAlchemyHealthCheck
 from src.infrastructure.repositories import BlacklistRepository
 from src.adapters.health_controller import HealthController, PingController
-from src.adapters.blacklist_controller import BlacklistController, BlacklistCheckController
+from src.adapters.blacklist_controller import BlacklistController, BlacklistCheckController, TokenController
 
 
 class DIContainer:
@@ -74,3 +74,6 @@ class DIContainer:
 
     def get_blacklist_check_controller(self):
         return self.create_blacklist_controller_class(BlacklistCheckController)
+
+    def get_blacklist_token_controller(self):
+        return self.create_blacklist_controller_class(TokenController)

@@ -1,4 +1,5 @@
 from flask import request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from marshmallow import ValidationError
 from functools import wraps
@@ -8,29 +9,28 @@ from .schemas import (
     blacklist_response_schema,
     blacklist_check_response_schema
 )
-
+from ..utils.jwt_utils import get_singleton_token
 
 def require_auth_token(f):
-    """Decorator to require Bearer token authentication"""
+    @jwt_required()
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        auth_header = request.headers.get('Authorization')
-        
-        if not auth_header:
-            return {'error': 'Missing Authorization header'}, 401
-        
-        if not auth_header.startswith('Bearer '):
-            return {'error': 'Invalid Authorization header format'}, 401
-        
-        token = auth_header[7:]  # Remove "Bearer " prefix
-        
-        if not token:
-            return {'error': 'Missing token'}, 401
-        
-        # For now, we'll accept any Bearer token
-        # In a real application, you would validate the token
+        # Get user identity from JWT token
+        user_identity = get_jwt_identity()
+
+        # Optional: Add additional validation
+        if not user_identity:
+            return {'error': 'Invalid token identity'}, 401
+
+        # Add user info to request context for potential use
+        request.user_info = {
+            'identity': user_identity,
+            'jwt_data': get_jwt_identity()
+        }
+
         return f(*args, **kwargs)
-    
+    """Decorator to require Bearer token authentication"""
+
     return decorated_function
 
 
@@ -94,3 +94,22 @@ class BlacklistCheckController(Resource):
             
         except Exception as e:
             return {'error': 'Internal server error'}, 500
+
+
+class TokenController(Resource):
+    """Controller for token generation (for testing purposes)"""
+
+    def __init__(self, blacklist_service: BlacklistService):
+        self.blacklist_service = blacklist_service
+
+    def post(self):
+        """Return the same static JWT token each call"""
+        try:
+            token = get_singleton_token()
+            return {
+                'token': token,
+                'message': 'Token generated successfully',
+                'usage': 'Use this token in Authorization header: Bearer <token>'
+            }, 200
+        except Exception as e:
+            return {'error': 'Failed to generate token'}, 500

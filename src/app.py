@@ -29,6 +29,9 @@ def create_app(config_name="default"):
     api.add_resource(container.get_blacklist_controller(), "/blacklists")
     api.add_resource(container.get_blacklist_check_controller(), "/blacklists/<string:email>")
 
+    # Add token endpoint
+    api.add_resource(container.get_blacklist_token_controller(), "/token")
+
     # Store container in app context for access in controllers
     app.container = container
 
