@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 from src.app import create_app
 from src.infrastructure.models import db, BlacklistModel
+from unittest.mock import patch
 
 
 class TestBlacklistService(unittest.TestCase):
@@ -14,9 +15,20 @@ class TestBlacklistService(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.client = self.app.test_client()
-        
+
         # Create tables
         db.create_all()
+
+        # Obtain a valid JWT once for all tests
+        token_resp = self.client.post('/token')
+        token_data = json.loads(token_resp.data)
+        self.auth_headers = {
+            "Authorization": f"Bearer {token_data['token']}",
+            "Content-Type": "application/json"
+        }
+        self.auth_only_headers = {
+            "Authorization": f"Bearer {token_data['token']}"
+        }
 
     def tearDown(self):
         """Tear down test environment"""
@@ -31,16 +43,13 @@ class TestBlacklistService(unittest.TestCase):
             "app_uuid": "12345678-1234-1234-1234-123456789012",
             "blocked_reason": "Spam detected"
         }
-        
-        headers = {
-            "Authorization": "Bearer test-token",
-            "Content-Type": "application/json"
-        }
-        
-        response = self.client.post('/blacklists', 
-                                    data=json.dumps(data), 
-                                    headers=headers)
-        
+
+        response = self.client.post(
+            '/blacklists',
+            data=json.dumps(data),
+            headers=self.auth_headers
+        )
+
         self.assertEqual(response.status_code, 201)
         response_data = json.loads(response.data)
         self.assertIn("mensaje", response_data)
@@ -48,34 +57,21 @@ class TestBlacklistService(unittest.TestCase):
 
     def test_add_duplicate_email_to_blacklist(self):
         """Test adding duplicate email to blacklist"""
-        # First add
         data = {
             "email": "test@example.com",
             "app_uuid": "12345678-1234-1234-1234-123456789012",
             "blocked_reason": "Spam detected"
         }
-        
-        headers = {
-            "Authorization": "Bearer test-token",
-            "Content-Type": "application/json"
-        }
-        
-        self.client.post('/blacklists', 
-                        data=json.dumps(data), 
-                        headers=headers)
-        
-        # Try to add again
-        response = self.client.post('/blacklists', 
-                                    data=json.dumps(data), 
-                                    headers=headers)
-        
+
+        self.client.post('/blacklists', data=json.dumps(data), headers=self.auth_headers)
+        response = self.client.post('/blacklists', data=json.dumps(data), headers=self.auth_headers)
+
         self.assertEqual(response.status_code, 409)
         response_data = json.loads(response.data)
         self.assertIn("error", response_data)
 
     def test_check_blacklisted_email(self):
         """Test checking if an email is blacklisted"""
-        # First add email to blacklist
         blacklist_entry = BlacklistModel(
             email="blacklisted@example.com",
             app_uuid="12345678-1234-1234-1234-123456789012",
@@ -84,14 +80,9 @@ class TestBlacklistService(unittest.TestCase):
         )
         db.session.add(blacklist_entry)
         db.session.commit()
-        
-        headers = {
-            "Authorization": "Bearer test-token"
-        }
-        
-        response = self.client.get('/blacklists/blacklisted@example.com', 
-                                   headers=headers)
-        
+
+        response = self.client.get('/blacklists/blacklisted@example.com', headers=self.auth_only_headers)
+
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
         self.assertTrue(response_data["blacklisted"])
@@ -100,13 +91,8 @@ class TestBlacklistService(unittest.TestCase):
 
     def test_check_non_blacklisted_email(self):
         """Test checking if a non-blacklisted email"""
-        headers = {
-            "Authorization": "Bearer test-token"
-        }
-        
-        response = self.client.get('/blacklists/clean@example.com', 
-                                   headers=headers)
-        
+        response = self.client.get('/blacklists/clean@example.com', headers=self.auth_only_headers)
+
         self.assertEqual(response.status_code, 200)
         response_data = json.loads(response.data)
         self.assertFalse(response_data["blacklisted"])
@@ -119,11 +105,13 @@ class TestBlacklistService(unittest.TestCase):
             "app_uuid": "12345678-1234-1234-1234-123456789012",
             "blocked_reason": "Spam detected"
         }
-        
-        response = self.client.post('/blacklists', 
-                                    data=json.dumps(data),
-                                    content_type='application/json')
-        
+
+        response = self.client.post(
+            '/blacklists',
+            data=json.dumps(data),
+            content_type='application/json'
+        )
+
         self.assertEqual(response.status_code, 401)
 
     def test_invalid_email_format(self):
@@ -133,18 +121,10 @@ class TestBlacklistService(unittest.TestCase):
             "app_uuid": "12345678-1234-1234-1234-123456789012",
             "blocked_reason": "Spam detected"
         }
-        
-        headers = {
-            "Authorization": "Bearer test-token",
-            "Content-Type": "application/json"
-        }
-        
-        response = self.client.post('/blacklists', 
-                                    data=json.dumps(data), 
-                                    headers=headers)
-        
-        self.assertEqual(response.status_code, 400)
 
+        response = self.client.post('/blacklists', data=json.dumps(data), headers=self.auth_headers)
+
+        self.assertEqual(response.status_code, 400)
 
 if __name__ == '__main__':
     unittest.main()
