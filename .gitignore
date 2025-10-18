@@ -208,3 +208,6 @@ __marimo__/
 
 # Pycharm
 /.idea
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/app_versions
