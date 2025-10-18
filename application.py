@@ -11,10 +11,17 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
 from src.app import create_app
 from src.infrastructure.models import db
 
+# Create the application instance for gunicorn/WSGI servers
+application = create_app('production')
+
+# Create database tables on startup
+with application.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
+    # When running directly (not via gunicorn), use development config
     app = create_app('development')
     
-    # Create database tables on startup
     with app.app_context():
         db.create_all()
         
