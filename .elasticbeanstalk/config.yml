@@ -1,12 +1,16 @@
 branch-defaults:
   main:
-    environment: test-env
+    environment: blacklist-api-env
     group_suffix: null
+environment-defaults:
+  blacklist-api-env:
+    branch: null
+    repository: null
 global:
-  application_name: MISW4304-Proyecto-DevOps
+  application_name: blacklist-api
   branch: null
   default_ec2_keyname: null
-  default_platform: Python 3.12 running on 64bit Amazon Linux 2023
+  default_platform: Python 3.12
   default_region: us-east-1
   include_git_submodules: true
   instance_profile: null
