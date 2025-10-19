@@ -1,10 +1,10 @@
 # MISW4304-Proyecto-DevOps
 
-A Flask REST API project implementing hexagonal architecture with comprehensive health checks and DevOps best practices.
+A Flask REST API project implementing hexagonal architecture with comprehensive health checks, DevOps best practices, and AWS Elastic Beanstalk deployment automation.
 
 ## Project Overview
 
-This project is a Flask-based REST API that demonstrates hexagonal architecture (ports and adapters) with proper separation of concerns, dependency injection, and comprehensive testing. It includes health check endpoints for monitoring and a complete DevOps setup with Makefile automation.
+This project is a Flask-based REST API that demonstrates hexagonal architecture (ports and adapters) with proper separation of concerns, dependency injection, and comprehensive testing. It includes health check endpoints for monitoring, blacklist management functionality, and complete AWS Elastic Beanstalk deployment automation with various deployment strategies.
 
 ## Architecture
 
@@ -35,32 +35,49 @@ The project follows **Hexagonal Architecture** (also known as Ports and Adapters
 
 ```
 MISW4304-Proyecto-DevOps/
-├── src/                          # Source code organized by layers
-│   ├── domain/                   # Domain layer (entities, business logic)
-│   │   ├── entities.py          # Domain entities (HealthStatus)
-│   │   └── ports.py             # Service interfaces
-│   ├── application/              # Application layer (use cases)
-│   │   └── health_service.py    # Health check operations
-│   ├── infrastructure/           # Infrastructure layer (databases, external services)
-│   │   ├── models.py            # SQLAlchemy database models
-│   │   ├── repositories.py      # Future repository implementations
-│   │   └── health_check.py      # Health check implementations
-│   ├── adapters/                 # Adapters layer (HTTP, external APIs)
-│   │   ├── health_controller.py # Health check HTTP controllers
-│   │   └── schemas.py           # Request/response schemas
-│   ├── container.py             # Dependency injection container
-│   ├── app.py                   # Application factory
-│   └── config.py                # Configuration management
-├── tests/                        # Test suite
-│   ├── test_health_service.py   # Unit tests for health service
-│   ├── test_integration.py      # Integration tests
-│   └── run_tests.py             # Test runner
-├── main.py                       # Main application entry point
-├── requirements.txt              # Python dependencies
-├── Makefile                      # Automation commands
-├── Dockerfile                    # Container configuration
-├── .dockerignore                # Docker ignore file
-└── README.md                     # This file
+├── src/                                    # Source code organized by layers
+│   ├── domain/                             # Domain layer (entities, business logic)
+│   │   ├── entities.py                    # Domain entities (HealthStatus, Blacklist)
+│   │   └── ports.py                       # Service interfaces
+│   ├── application/                        # Application layer (use cases)
+│   │   ├── health_service.py              # Health check operations
+│   │   └── blacklist_service.py           # Blacklist management operations
+│   ├── infrastructure/                     # Infrastructure layer (databases, external services)
+│   │   ├── models.py                      # SQLAlchemy database models
+│   │   ├── repositories.py                # Repository implementations
+│   │   ├── health_check.py                # Health check implementations
+│   │   └── migrations.py                  # Database migrations
+│   ├── adapters/                           # Adapters layer (HTTP, external APIs)
+│   │   ├── health_controller.py           # Health check HTTP controllers
+│   │   ├── blacklist_controller.py        # Blacklist HTTP controllers
+│   │   └── schemas.py                     # Request/response schemas
+│   ├── utils/                              # Utility functions
+│   │   └── jwt_utils.py                   # JWT authentication utilities
+│   ├── container.py                       # Dependency injection container
+│   ├── app.py                             # Application factory
+│   └── config.py                          # Configuration management
+├── tests/                                  # Test suite
+│   ├── test_health_service.py             # Unit tests for health service
+│   ├── test_blacklist_service.py          # Unit tests for blacklist service
+│   └── run_tests.py                       # Test runner
+├── .ebextensions/                          # AWS Elastic Beanstalk configurations
+│   ├── app.config                         # Application configuration
+│   ├── deployment.config                  # Deployment policies
+│   ├── blue_green.config                  # Blue/Green deployment settings
+│   ├── monitoring.config                  # CloudWatch monitoring setup
+│   └── scaling.config                     # Auto-scaling configuration
+├── .elasticbeanstalk/                      # EB CLI configuration
+│   └── config.yml                         # Environment configuration
+├── application.py                          # Main application entry point (WSGI)
+├── requirements.txt                        # Python dependencies
+├── .ebignore                              # EB deployment ignore patterns
+├── .gitignore                             # Git ignore patterns
+├── eb_init.sh                             # EB environment initialization script
+├── eb_deploy_all_at_once.sh               # All-at-once deployment script
+├── eb_deploy_rolling.sh                   # Rolling deployment script
+├── eb_deploy_rolling_with_batch.sh        # Rolling with batch deployment script
+├── eb_deploy_immutable.sh                 # Immutable deployment script
+└── README.md                              # This file
 ```
 
 ## Health Check Endpoints
@@ -80,53 +97,7 @@ The application provides comprehensive health checking capabilities:
   }
   ```
 
-### 2. Health Check Endpoint
-- **URL**: `/health`
-- **Method**: `GET`
-- **Description**: Comprehensive health status including database connectivity
-- **Response**:
-  ```json
-  {
-    "status": "healthy|unhealthy|error",
-    "message": "Status description",
-    "timestamp": "2024-01-01T12:00:00.000Z"
-  }
-  ```
-
 ## Quick Start
-
-### Using Makefile (Recommended)
-
-**For new users - Complete setup in one command:**
-```bash
-make setup     # Creates virtual environment and installs all dependencies
-```
-
-**Alternative step-by-step setup:**
-
-1. **Setup development environment:**
-   ```bash
-   make dev-setup
-   ```
-
-2. **Run the application:**
-   ```bash
-   make run
-   ```
-
-3. **Test the application:**
-   ```bash
-   make test
-   ```
-
-4. **Test health endpoints:**
-   ```bash
-   make ping
-   make health
-   ```
-
-### Manual Setup
-
 **With Virtual Environment (Recommended):**
 
 1. **Create and activate virtual environment:**
@@ -144,127 +115,29 @@ make setup     # Creates virtual environment and installs all dependencies
 
 3. **Run the application:**
    ```bash
-   python main.py
+   python application.py
    ```
 
-**Without Virtual Environment:**
+### API Endpoints - Blacklist Management
 
-1. **Install dependencies:**
+The application provides blacklist management capabilities for email blocking:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+- **POST** `/blacklists` - Add email to blacklist
+  - Requires JWT authentication
+  - Request body: `{"email": "user@example.com", "app_uuid": "uuid", "blocked_reason": "reason"}`
 
-2. **Run the application:**
-
-   ```bash
-   python main.py
-   ```
-
-3. **Run tests:**
-
-   ```bash
-   python tests/run_tests.py
-   ```
-
-## Docker Usage
-
-```bash
-# Build the Docker image
-make docker-build
-
-# Run the container
-make docker-run
-```
-
-## API Endpoints
-
-### Health Check
-
-- **GET** `/ping` - Simple ping check
-
-  ```bash
-  curl http://localhost:5000/ping
-  ```
-
-- **GET** `/health` - Comprehensive health check
-
-  ```bash
-  curl http://localhost:5000/health
-  ```
-
-## Makefile Commands
-
-The project includes a comprehensive Makefile for automation:
-
-```bash
-make help              # Show all available commands
-make install           # Install dependencies
-make dev               # Install development dependencies
-make run               # Run the application
-make test              # Run all tests
-make test-unit         # Run unit tests only
-make test-integration  # Run integration tests only
-make test-coverage     # Run tests with coverage report
-make lint              # Run code linting
-make format            # Format code with black
-make clean             # Clean up temporary files
-make docker-build      # Build Docker image
-make docker-run        # Run in Docker
-make ping              # Test ping endpoint
-make health            # Test health endpoint
-make dev-setup         # Complete development setup
-make check             # Run tests and linting
-```
+- **GET** `/blacklists/<email>` - Check if email is blacklisted
+  - Requires JWT authentication
+  - Returns blacklist status and details
 
 ## Testing
 
 The project includes comprehensive testing:
 
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test the complete API endpoints
-- **Coverage Reports**: Track test coverage
-
-Run specific test types:
-
-```bash
-make test-unit         # Unit tests only
-make test-integration  # Integration tests only
-make test-coverage     # With coverage report
-```
-
-## Development
-
-### Code Quality
-
-The project enforces code quality through:
-
-- **Black**: Code formatting
-- **Flake8**: Code linting
-- **pytest**: Testing framework
-- **Coverage**: Test coverage tracking
-
-### Development Workflow
-
-1. Set up development environment:
-
-   ```bash
-   make dev-setup
-   ```
-
-2. Make your changes
-
-3. Run quality checks:
-
-   ```bash
-   make check  # Runs tests and linting
-   ```
-
-4. Format code:
-
-   ```bash
-   make format
-   ```
+- **Unit Tests**:
+    ```bash
+    python3 tests/run_tests.py
+    ```
 
 ## Hexagonal Architecture Benefits
 
@@ -286,9 +159,31 @@ Environment variables:
 - `DATABASE_URL`: Database connection URL
 - `JWT_SECRET_KEY`: JWT signing key
 
-## Docker Health Checks
+## AWS Elastic Beanstalk Deployment
 
-The Docker container includes built-in health checks using the `/ping` endpoint, ensuring container orchestration platforms can properly monitor application health.
+The project includes comprehensive AWS Elastic Beanstalk deployment automation with five different deployment strategies:
+
+### Deployment Strategies
+
+1. **All at Once**: Deploy to all instances simultaneously (fastest, brief downtime)
+2. **Rolling**: Deploy in batches without additional instances
+3. **Rolling with Additional Batch**: Deploy with extra capacity maintained
+4. **Immutable**: Deploy to new instances, then swap (zero downtime, safest)
+
+### Deployment Scripts
+
+- `eb_init.sh` - Initialize and create EB environment
+- `eb_deploy_*.sh` - Deploy using specific strategies
+
+### Configuration Files
+
+The `.ebextensions/` directory contains configuration for:
+- Application settings and environment variables
+- Deployment policies and strategies
+- Auto-scaling rules
+- CloudWatch monitoring and alarms
+- Blue/Green deployment settings
+- Traffic splitting configuration
 
 ## Contributing
 

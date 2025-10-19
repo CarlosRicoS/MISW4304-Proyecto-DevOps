@@ -211,3 +211,6 @@ __marimo__/
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/app_versions
+
+Procfile
+.eb_config

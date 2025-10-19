@@ -1,0 +1,83 @@
+# Elastic Beanstalk ignore file
+# Files and directories to exclude from deployment
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Terraform
+terraform/
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+
+# Scripts and docs
+*.md
+README*
+LICENSE
+CHANGELOG*
+terraform_apply.sh
+terraform_destroy.sh
+eb_*.sh
+deployment_stats.csv
+deployment_comparison.md
+.eb_config
+
+# Test files
+tests/
+test_*.py
+*_test.py
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+latest.zip
+
+# Docker (not needed for EB)
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Makefile
+Makefile
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+
+# Development files
+.ebextensions/saved_configs/
+
