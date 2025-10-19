@@ -1,0 +1,604 @@
+{
+	"info": {
+		"_postman_id": "14e9767c-36f7-40af-9188-ee66e491d230",
+		"name": "BlackLists App",
+		"description": "Documentación de la API asociada al microservicio Blacklists. Dicha aplicación se encarga de gestionar los emails que son agregados a la \"Black List\" o lista negra dentro del sistema.\n\n## Integrantes\n\nAngel Henao - [ay.henao@uniandes.edu.co](https://mailto:ay.henao@uniandes.edu.co)\n\nCarlos Rico - [c.ricos@uniandes.edu.co](https://mailto:c.ricos@uniandes.edu.co)\n\nAndres Ramirez - [ha.ramirezg1@uniandes.edu.co](https://mailto:ha.ramirezg1@uniandes.edu.co)\n\nHernan Dario Jimenez - [hd.jimenezl1@uniandes.edu.co](https://mailto:hd.jimenezl1@uniandes.edu.co)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "651916",
+		"_collection_link": "https://www.postman.com/miso-devops-stratus-core/workspace/miso-devops-stratus-core-workspace/collection/651916-14e9767c-36f7-40af-9188-ee66e491d230?action=share&source=collection_link&creator=651916"
+	},
+	"item": [
+		{
+			"name": "Agregar email a blacklist",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"string\",\n    \"app_uuid\": \"string\",\n    \"blocked_reason\": \"string\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/blacklists",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"blacklists"
+					]
+				},
+				"description": "Ingresa un email a la blacklist. Los datos requeridos son:\n\n- email en cuestión\n    \n- identificador de la app (app_uuid)\n    \n- La razón por la cual se anexa a la blacklist (blocked_reason)\n    \n\nAdicionalmente, la IP de la solicitud será almacenada y también la fecha de creación del registro."
+			},
+			"response": [
+				{
+					"name": "Operación exitosa",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDkwNzYzOCwianRpIjoiNzRjNWU3OWUtM2U3ZC00NGRhLWFiNzAtOTZiODY0NzYwNjdkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwibmJmIjoxNzYwOTA3NjM4LCJjc3JmIjoiYzFiY2MwMTgtMTkzNi00OTFiLTk3YzctMjYxZjYxMTY3NmU0IiwidXNlcl9pZCI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwic2VydmljZSI6ImJsYWNrbGlzdF9hcGkiLCJjcmVhdGVkX2F0IjoiMjAyNS0xMC0xOVQyMTowMDozOC4zMTE0NDcifQ.JANxSH1Ve_YoZ9dpUPSAvSxKbPl0QhIM6u8xXE5oim4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"angel.henao0@outlook.com\",\n    \"app_uuid\": \"d2b9066c-9348-46d3-a8f5-a68d9a1c339b\",\n    \"blocked_reason\": \"Spam detectado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/blacklists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists"
+							]
+						}
+					},
+					"status": "CREATED",
+					"code": 201,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:05:35 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "267"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"mensaje\": \"Email angel.henao0@outlook.com agregado a la lista negra\",\n    \"email\": \"angel.henao0@outlook.com\",\n    \"app_uuid\": \"d2b9066c-9348-46d3-a8f5-a68d9a1c339b\",\n    \"blocked_reason\": \"Spam detectado\",\n    \"fecha_creacion\": \"2025-10-19T21:05:35.495345\"\n}"
+				},
+				{
+					"name": "Email ya registrado",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDkwNzYzOCwianRpIjoiNzRjNWU3OWUtM2U3ZC00NGRhLWFiNzAtOTZiODY0NzYwNjdkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwibmJmIjoxNzYwOTA3NjM4LCJjc3JmIjoiYzFiY2MwMTgtMTkzNi00OTFiLTk3YzctMjYxZjYxMTY3NmU0IiwidXNlcl9pZCI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwic2VydmljZSI6ImJsYWNrbGlzdF9hcGkiLCJjcmVhdGVkX2F0IjoiMjAyNS0xMC0xOVQyMTowMDozOC4zMTE0NDcifQ.JANxSH1Ve_YoZ9dpUPSAvSxKbPl0QhIM6u8xXE5oim4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"angel.henao0@outlook.com\",\n    \"app_uuid\": \"d2b9066c-9348-46d3-a8f5-a68d9a1c339b\",\n    \"blocked_reason\": \"Spam detectado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/blacklists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists"
+							]
+						}
+					},
+					"status": "CONFLICT",
+					"code": 409,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:06:30 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "78"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Email angel.henao0@outlook.com ya existe en la lista negra\"\n}"
+				},
+				{
+					"name": "Token inválido",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer INVALID_TOKEN",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"angel.henao0@outlook.com\",\n    \"app_uuid\": \"d2b9066c-9348-46d3-a8f5-a68d9a1c339b\",\n    \"blocked_reason\": \"Spam detectado\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/blacklists",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists"
+							]
+						}
+					},
+					"status": "UNAUTHORIZED",
+					"code": 401,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:07:26 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "86"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Invalid identity\",\n    \"message\": \"Token signature verification failed\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Encontrar email en blacklist",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{AUTH_TOKEN}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{API_HOST}}/blacklists/<<email>>",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"blacklists",
+						"<<email>>"
+					]
+				},
+				"description": "Busca la información de un email que fue ingresado a la blacklist."
+			},
+			"response": [
+				{
+					"name": "Operación exitosa - Email encontrado",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/blacklists/angel.henao0@outlook.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists",
+								"angel.henao0@outlook.com"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:08:53 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "217"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"blacklisted\": true,\n    \"email\": \"angel.henao0@outlook.com\",\n    \"blocked_reason\": \"Spam detectado\",\n    \"app_uuid\": \"d2b9066c-9348-46d3-a8f5-a68d9a1c339b\",\n    \"fecha_creacion\": \"2025-10-19T21:05:35.495345\"\n}"
+				},
+				{
+					"name": "Operación exitosa - Email no encontrado",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/blacklists/angel.henao0@outlook.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists",
+								"angel.henao0@outlook.com"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:02:52 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "70"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"blacklisted\": false,\n    \"email\": \"angel.henao0@outlook.com\"\n}"
+				},
+				{
+					"name": "Token inválido",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer INVALID_TOKEN",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/blacklists/angel.henao0@outlook.com",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"blacklists",
+								"angel.henao0@outlook.com"
+							]
+						}
+					},
+					"status": "UNAUTHORIZED",
+					"code": 401,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:03:56 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "86"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": \"Invalid identity\",\n    \"message\": \"Token signature verification failed\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{API_HOST}}/ping",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"ping"
+					]
+				},
+				"description": "Permite validar si el servicio Blacklists está operativo."
+			},
+			"response": [
+				{
+					"name": "Operación exitosa",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/ping",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 20:57:33 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "93"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"status\": \"ok\",\n    \"message\": \"pong\",\n    \"timestamp\": \"2025-10-19T20:57:33.465496\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Generar token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{API_HOST}}/token",
+					"host": [
+						"{{API_HOST}}"
+					],
+					"path": [
+						"token"
+					]
+				},
+				"description": "Genera el token requerido para ejecutar las operaciones de agregar y obtener emails de la blacklists."
+			},
+			"response": [
+				{
+					"name": "Operación exitosa",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"token"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": null,
+					"header": [
+						{
+							"key": "Server",
+							"value": "Werkzeug/3.1.3 Python/3.12.3"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 19 Oct 2025 21:01:03 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "593"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc2MDkwNzYzOCwianRpIjoiNzRjNWU3OWUtM2U3ZC00NGRhLWFiNzAtOTZiODY0NzYwNjdkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwibmJmIjoxNzYwOTA3NjM4LCJjc3JmIjoiYzFiY2MwMTgtMTkzNi00OTFiLTk3YzctMjYxZjYxMTY3NmU0IiwidXNlcl9pZCI6ImJsYWNrbGlzdF9zZXJ2aWNlIiwic2VydmljZSI6ImJsYWNrbGlzdF9hcGkiLCJjcmVhdGVkX2F0IjoiMjAyNS0xMC0xOVQyMTowMDozOC4zMTE0NDcifQ.JANxSH1Ve_YoZ9dpUPSAvSxKbPl0QhIM6u8xXE5oim4\",\n    \"message\": \"Token generated successfully\",\n    \"usage\": \"Use this token in Authorization header: Bearer <token>\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "API_HOST",
+			"value": ""
+		},
+		{
+			"key": "AUTH_TOKEN",
+			"value": ""
+		},
+		{
+			"key": "EMAIL_TO_FIND",
+			"value": ""
+		}
+	]
+}
