@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  variables:
+    S3_BUCKET: miso-devops-dev-repository
+    S3_KEY: app.zip
+
+phases:
+  pre_build:
+    commands:
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - mkdir -p dist
+      - cp -r application.py src requirements.txt .ebextensions .elasticbeanstalk dist/ 2>/dev/null || true
+      - echo "Prepared dist directory for artifact packaging"
+  post_build:
+    commands:
+      - cd dist && zip -qr ../$S3_KEY . && cd -
+      - aws s3 cp $S3_KEY s3://$S3_BUCKET/$S3_KEY
+artifacts:
+  files:
+    - '**/*'

@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+    PYTHONDONTWRITEBYTECODE: "1"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.11
+    commands:
+      - echo Installing dependencies
+      - pip3 install --upgrade pip
+      - pip3 install -r requirements.txt
+  pre_build:
+    commands:
+      - python3 --version
+      - pip3 --version
+      - echo Running unit tests
+  build:
+    commands:
+      - mkdir -p test-reports
+      - pytest -q -vv --maxfail=1 --disable-warnings --junitxml=test-reports/junit.xml --cov=src --cov-report=xml:coverage.xml tests
+  post_build:
+    commands:
+      - echo Test phase completed
+
+reports:
+  unit-tests:
+    files:
+      - junit.xml
+    base-directory: test-reports
+    file-format: JUNITXML
+
+artifacts:
+  files:
+    - coverage.xml
+  discard-paths: yes
