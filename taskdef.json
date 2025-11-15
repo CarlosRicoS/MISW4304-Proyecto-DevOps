@@ -1,0 +1,26 @@
+{
+    "executionRoleArn": "arn:aws:iam::108782086589:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+      {
+        "portMappings": [
+          {
+            "hostPort": 5000,
+            "protocol": "tcp",
+            "containerPort": 5000
+          }
+        ],
+
+        "image": "<IMAGE1_NAME>",
+        "essential": true,
+        "name": "devops-team11-app"
+      }
+    ],
+
+    "requiresCompatibilities": [
+      "FARGATE"
+    ],
+    "networkMode": "awsvpc",
+    "cpu": "512",
+    "memory": "1024",
+    "family": "devops-team11-task-definition"
+  }
