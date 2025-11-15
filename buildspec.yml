@@ -1,23 +1,35 @@
 version: 0.2
 
-env:
-  variables:
-    S3_BUCKET: miso-devops-dev-repository
-    S3_KEY: app.zip
-
 phases:
   pre_build:
     commands:
-      - pip install -r requirements.txt
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 108782086589.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - mkdir -p dist
-      - cp -r application.py src requirements.txt .ebextensions .elasticbeanstalk dist/ 2>/dev/null || true
-      - echo "Prepared dist directory for artifact packaging"
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t devops-team11 .
+      - docker tag devops-team11:latest 108782086589.dkr.ecr.us-east-1.amazonaws.com/devops-team11:latest
   post_build:
     commands:
-      - cd dist && zip -qr ../$S3_KEY . && cd -
-      - aws s3 cp $S3_KEY s3://$S3_BUCKET/$S3_KEY
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 108782086589.dkr.ecr.us-east-1.amazonaws.com/devops-team11:latest
+      - echo Writing Image Definitions file...
+      - printf '[{"name":"Container-devops-team11","imageUri":"108782086589.dkr.ecr.us-east-1.amazonaws.com/devops-team11:latest"}]' > imagedefinitions.json
+      - printf '{"ImageURI":"108782086589.dkr.ecr.us-east-1.amazonaws.com/devops-team11:latest"}' > imageDetail.json
+      - cat imagedefinitions.json
 artifacts:
   files:
     - '**/*'
+    - imagedefinitions.json
+    - imageDetail.json
+  secondary-artifacts:
+    DefinitionArtifact:
+      files:
+        - appspec.yaml
+        - taskdef.json
+    ImageArtifact:
+      files:
+        - imageDetail.json
