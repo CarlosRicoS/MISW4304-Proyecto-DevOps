@@ -1,6 +1,6 @@
-FROM python:3.12.3
+FROM public.ecr.aws/docker/library/python:3.12.3
 
-RUN apt-get update && apt-get install -y
+RUN apt-get update && apt-get clean
 
 WORKDIR /project
 COPY . /project/
