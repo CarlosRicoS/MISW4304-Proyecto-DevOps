@@ -9,7 +9,10 @@
             "containerPort": 5000
           }
         ],
-
+        "secrets": [
+          { "name": "DATABASE_URL", "valueFrom": "arn:aws:ssm:us-east-1:108782086589:parameter/devops/prod/DATABASE_URL" },
+          { "name": "NEW_RELIC_LICENSE_KEY", "valueFrom": "arn:aws:ssm:us-east-1:108782086589:parameter/devops/prod/NEW_RELIC_LICENSE_KEY" }
+        ],
         "image": "<IMAGE1_NAME>",
         "essential": true,
         "name": "devops-team11-app"
